@@ -1,1 +1,0 @@
-void jouer(SDL_Surface* ecran);
