@@ -2,47 +2,34 @@
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_image.h>
-// #include <SDL_ttf.h>
-
+#include "init.h"
+enum {VIDE, MUR, CAISSE, OBJECTIF, MARIO, CAISSE_OK}; // VIDE = 0, MUR = 1, CAISSE = 2 etc..
 int main(int argc, char const *argv[])
 {
-	// Gérer les erreurs : fprintf(stderr, "Error SDL %s\n", SDL_GetError());
 	SDL_Init(SDL_INIT_VIDEO);
-	// TTF_Init();
-	// le contenu du programme
-	SDL_Surface * fenetre = NULL, * mario = NULL; //* carre = NULL, *texte = NULL;
-	// TTF_Font * font;
-	// SDL_Color fontColor = {0,0,0};
-	// char chrono[20];
-	// sprintf(chrono, "%d", SDL_GetTicks());
-	
-	fenetre = SDL_SetVideoMode(500, 500, 32, SDL_HWSURFACE);
-	// Uint32 grey = SDL_MapRGB(fenetre->format, 128, 128, 128);
- 	// carre = SDL_CreateRGBSurface(SDL_HWSURFACE, 50, 50, 32, 0, 0, 0, 0);
+	SDL_Surface * fenetre = NULL, * mario = NULL, *mur = NULL;
+	int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR] = {0};
+	fenetre = SDL_SetVideoMode(LARGEUR_FENETRE, HAUTEUR_FENETRE, 32, SDL_HWSURFACE);
 	mario = IMG_Load("mario/mario_bas.gif");
-	// font = TTF_OpenFont("FFF_Tusj.ttf", 22);
-	// texte = TTF_RenderText_Blended(font, chrono, fontColor);
+	mur = IMG_Load("mario/mur.jpg");
 
-	SDL_Rect positionMario; // postexte;
-	positionMario.x = 0;
-	positionMario.y = 0;	
-	// postexte.x = 0;
-	// postexte.y = fenetre->h - texte->h;
-
+	SDL_Rect positionMario, positionMur;
+	positionMario.x = 344;	
+	positionMario.y = fenetre->h /2;	
 	// Modification des couleurs du background
 	SDL_FillRect(fenetre, NULL, SDL_MapRGB(fenetre->format, 255, 255, 255));
-	// SDL_FillRect(carre, NULL, grey);
-	// SDL_BlitSurface(texte, NULL, fenetre, &postexte);
 	SDL_BlitSurface(mario, NULL, fenetre, &positionMario);
+
+	// Placement Mur
+	placerMur(fenetre, mur, positionMur, carte);
 	// Actualisation de la fenêtre
 	SDL_Flip(fenetre);
 	// Boucle "pseudo" infini (BASE DU PROGRAMME)
 	int continuer = 1; 
-	// int now = 0, before = 0, interval = 1000;
 	SDL_EnableKeyRepeat(100, 100);
 	while(continuer) {
+		// printf("%d\n", carte[0][0]);
 		SDL_Event event;
-		// now = SDL_GetTicks();
 		SDL_WaitEvent(&event);
 		switch(event.type) {
 			case SDL_QUIT :
@@ -55,42 +42,63 @@ int main(int argc, char const *argv[])
                         continuer = 0;
                         break;
                     case SDLK_UP:
+        	            if (carte[positionMario.x/34][positionMario.y/34 - 1] == MUR) // S'il y a un mur, on arrête
+        			        break;
                     	mario = IMG_Load("mario/mario_haut.gif");
                        	positionMario.y-=10;
                         break;
                     case SDLK_DOWN:
+                    	if (carte[positionMario.x/34][positionMario.y/34 + 1] == MUR) // S'il y a un mur, on arrête
+        			        break;
                         mario = IMG_Load("mario/mario_bas.gif");
                         positionMario.y+=10;
                         break;
                     case SDLK_RIGHT:
+	                    if (carte[positionMario.x/34 + 1][positionMario.y/34] == MUR) // S'il y a un mur, on arrête
+	        			    break;
                         mario = IMG_Load("mario/mario_droite.gif");
                         positionMario.x+=10;
                         break;
                     case SDLK_LEFT:
+                    	if (carte[(positionMario.x -1)/34][positionMario.y/34] == MUR) // S'il y a un mur, on arrête
+	        			    break;
                         mario = IMG_Load("mario/mario_gauche.gif");
                         positionMario.x-=10;
                         break;
                 }
-            // if (now-before < interval)
-            // 	SDL_Delay(interval-(now-before));
-			SDL_FillRect(fenetre, NULL, SDL_MapRGB(fenetre->format, 255, 255, 255));                
-            SDL_BlitSurface(mario, NULL, fenetre, &positionMario);
-			// sprintf(chrono, "%d", SDL_GetTicks());
-			// texte = TTF_RenderText_Blended(font, chrono, fontColor);
-			// SDL_BlitSurface(texte, NULL, fenetre, &postexte);
-			// Actualisation de la fenêtre
-			SDL_Flip(fenetre);
-			// before = now;
             break;
 		}
+		SDL_FillRect(fenetre, NULL, SDL_MapRGB(fenetre->format, 255, 255, 255));
+		SDL_BlitSurface(mario, NULL, fenetre, &positionMario);
+		placerMur(fenetre, mur, positionMur, carte);
+		SDL_Flip(fenetre);
 	}
-	// printf("%d\n", SDL_GetTicks());
+	// Désactivation de la répétition des touches (remise à 0)
+    SDL_EnableKeyRepeat(0, 0);
 	// Libérer la mémoire
 	SDL_FreeSurface(fenetre);
-	// SDL_FreeSurface(texte);
 	SDL_FreeSurface(mario);
-	// SDL_FreeSurface(carre);
-	// TTF_Quit();
+	SDL_FreeSurface(mur);
 	SDL_Quit();
 	return 0;
+}
+
+void placerMur(SDL_Surface * fenetre, SDL_Surface * mur, SDL_Rect positionMur, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
+	int i = 0, j = 0, x, y;
+	for (x = 0; x < HAUTEUR_FENETRE; x+=TAILLE_BLOC)
+	{
+		j=0;
+		for (y = 0; y < LARGEUR_FENETRE; y+=TAILLE_BLOC)
+		{
+			positionMur.x = x;
+			positionMur.y = y;
+			if(y != LARGEUR_FENETRE/2 || x == 0 || x == HAUTEUR_FENETRE - TAILLE_BLOC) {
+				SDL_BlitSurface(mur, NULL, fenetre, &positionMur);
+				carte[i][j] = MUR;
+			}
+			j++;
+		}
+		i++;
+	}
+	
 }
