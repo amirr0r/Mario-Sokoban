@@ -118,6 +118,7 @@ void deplacerMario(SDL_Surface * mario, SDL_Surface * caisse, SDL_Rect * positio
 		else if(direction == "left") {
 			printf("MARIO : x-%d y-%d CAISSE : x-%d y-%d\n", positionMario->x/34, positionMario->y/34, positionCaisse->x/34, positionCaisse->y/34);
 		 		positionMario->x-=10;
+		 	if ((positionCaisse->x) + 19 == positionMario->x)
 		 		positionCaisse->x-=10;
 			// if (carte[positionCaisse->x/34][positionCaisse->y/34] == OBJECTIF)
 			if (positionCaisse->x == 35)
