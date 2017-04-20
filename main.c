@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "init.h"
-enum {VIDE, MUR, CAISSE, OBJECTIF, MARIO, CAISSE_OK}; // VIDE = 0, MUR = 1, CAISSE = 2 etc..
+
 int main(int argc, char const *argv[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -42,28 +42,16 @@ int main(int argc, char const *argv[])
                         continuer = 0;
                         break;
                     case SDLK_UP:
-        	            if (carte[positionMario.x/34][positionMario.y/34 - 1] == MUR) // S'il y a un mur, on arrête
-        			        break;
-                    	mario = IMG_Load("mario/mario_haut.gif");
-                       	positionMario.y-=10;
+                    	deplacerMario(mario, &positionMario, IMG_Load("mario/mario_haut.gif"), carte, positionMario.x/34, positionMario.y/34 - 1, "up");
                         break;
                     case SDLK_DOWN:
-                    	if (carte[positionMario.x/34][positionMario.y/34 + 1] == MUR) // S'il y a un mur, on arrête
-        			        break;
-                        mario = IMG_Load("mario/mario_bas.gif");
-                        positionMario.y+=10;
+                    	deplacerMario(mario, &positionMario, IMG_Load("mario/mario_bas.gif"), carte, positionMario.x/34, positionMario.y/34 + 1, "down");
                         break;
                     case SDLK_RIGHT:
-	                    if (carte[positionMario.x/34 + 1][positionMario.y/34] == MUR) // S'il y a un mur, on arrête
-	        			    break;
-                        mario = IMG_Load("mario/mario_droite.gif");
-                        positionMario.x+=10;
+                    	deplacerMario(mario, &positionMario, IMG_Load("mario/mario_droite.gif"), carte, positionMario.x/34 + 1, positionMario.y/34, "right");
                         break;
                     case SDLK_LEFT:
-                    	if (carte[(positionMario.x -1)/34][positionMario.y/34] == MUR) // S'il y a un mur, on arrête
-	        			    break;
-                        mario = IMG_Load("mario/mario_gauche.gif");
-                        positionMario.x-=10;
+                    	deplacerMario(mario, &positionMario, IMG_Load("mario/mario_gauche.gif"), carte, (positionMario.x -1)/34, positionMario.y/34, "left");
                         break;
                 }
             break;
@@ -101,4 +89,19 @@ void placerMur(SDL_Surface * fenetre, SDL_Surface * mur, SDL_Rect positionMur, i
 		i++;
 	}
 	
+}
+
+void deplacerMario(SDL_Surface * mario, SDL_Rect * positionMario, SDL_Surface * img, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], int x, int y, char * direction) {
+	if (carte[x][y] != MUR)  {// S'il y a un mur, on arrête
+		*mario = *img;
+		if(direction == "up")
+		 	positionMario->y-=10; 
+		else if(direction == "down")
+		 	positionMario->y+=10;
+		else if(direction == "left")
+		 	positionMario->x-=10;
+		else if(direction == "right")
+		 	positionMario->x+=10;
+
+   }
 }
