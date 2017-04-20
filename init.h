@@ -5,8 +5,5 @@
 #define HAUTEUR_FENETRE     TAILLE_BLOC * NB_BLOCS_HAUTEUR
 enum {VIDE, MUR, CAISSE, OBJECTIF, MARIO, CAISSE_OK}; // VIDE = 0, MUR = 1, CAISSE = 2 etc..
 void placerMur(SDL_Surface * fenetre, SDL_Surface * mur, SDL_Rect positionMur, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]);
-void caseMur(int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], int i, int j) {
-    if (carte[i][j] == 1) 
-        printf("carte[%d][%d]\n", i, j);
-}
-void deplacerMario(SDL_Surface * mario, SDL_Rect * positionMario, SDL_Surface * img, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], int x, int y, char * direction);
+void chargerImg(SDL_Surface * surf, SDL_Surface * img);
+void deplacerMario(SDL_Surface * mario, SDL_Surface * caisse, SDL_Rect * positionMario, SDL_Rect * positionCaisse, SDL_Surface * img, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], int x, int y, char * direction);
