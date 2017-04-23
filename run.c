@@ -58,16 +58,16 @@ int main(int argc, char const *argv[])
                         continuer = 0; 
                         break;
                     case SDLK_UP:
-                    	deplacement(fenetre, mario, &positionMario, &positionCaisse, carte, 'u');
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'u');
                         break;
                     case SDLK_DOWN:
-                    	deplacement(fenetre, mario, &positionMario, &positionCaisse, carte, 'd');
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'd');
                         break;
                     case SDLK_RIGHT:
-                    	deplacement(fenetre, mario, &positionMario, &positionCaisse, carte, 'r');
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'r');
                         break;
                     case SDLK_LEFT:
-                    	deplacement(fenetre, mario, &positionMario, &positionCaisse, carte, 'l');
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'l');
                         break;
                 }
             break;

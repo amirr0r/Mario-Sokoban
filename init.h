@@ -78,82 +78,104 @@ void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SD
 	// puts("----------------------------------------------------------------");
 	SDL_Flip(fenetre);
 }
-// void moove(SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
-// 	if (carte[positionMario->x/34][positionMario->y/34 +1] != MUR) {
-// 		if (carte[positionMario->x/34][positionMario->y/34 +1] == CAISSE && carte[positionCaisse->x/34][positionCaisse->y/34 +1] != MUR) {
-// 			carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
-// 			positionCaisse->y+=34;
-// 			carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
-// 		}
-// 		if (carte[positionMario->x/34][positionMario->y/34 +1] == VIDE) {
-// 			carte[positionMario->x/34][positionMario->y/34] = VIDE;
-// 			positionMario->y+=34;
-// 			carte[positionMario->x/34][positionMario->y/34] = MARIO;
-// 		}
-// 	}
-// }
-void deplacement(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], char direction) { // 'u' = up, 'd' = down, 'l' = left et 'r' = right.
+void moove(char inclinaison, SDL_Surface * caisse, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int xm, int ym, int xc, int yc, int newpositionM, int newpositionC, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
+	if (carte[xm][ym] != MUR) {
+		if (carte[xm][ym] == CAISSE && carte[xc][yc] != MUR) {
+			carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
+			if (inclinaison == 'h')
+				positionCaisse->x=newpositionC;
+			else
+				positionCaisse->y=newpositionC;
+			if(carte[positionCaisse->x/34][positionCaisse->y/34] == OBJECTIF)
+				chargerImg(caisse, IMG_Load("mario/caisse_ok.jpg"));
+			carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+		}
+		if (carte[xm][ym] == VIDE) {
+			carte[positionMario->x/34][positionMario->y/34] = VIDE;
+			if (inclinaison == 'h')
+				positionMario->x=newpositionM;
+			else				
+				positionMario->y=newpositionM;
+			carte[positionMario->x/34][positionMario->y/34] = MARIO;
+		}
+	}
+}
+
+
+void deplacement(SDL_Surface * caisse, SDL_Surface * mario, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], char direction) { // 'u' = up, 'd' = down, 'l' = left et 'r' = right.
 	switch(direction) {
 		case 'u' :
 			chargerImg(mario, IMG_Load("mario/mario_haut.gif"));
-			if (carte[positionMario->x/34][ positionMario->y/34 - 1] != MUR) {
-				if (carte[positionMario->x/34][ positionMario->y/34 - 1] == CAISSE && carte[positionCaisse->x/34][ positionCaisse->y/34 - 1] != MUR) {
-					carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
-					positionCaisse->y-=34;
-					carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
-				}
-				if (carte[positionMario->x/34][ positionMario->y/34 - 1] == VIDE) {
-					carte[positionMario->x/34][positionMario->y/34] = VIDE;
-					positionMario->y-=34;
-					carte[positionMario->x/34][positionMario->y/34] = MARIO;
-				}
-			}
+			// if (carte[positionMario->x/34][ positionMario->y/34 - 1] != MUR) {
+			// 	if (carte[positionMario->x/34][ positionMario->y/34 - 1] == CAISSE && carte[positionCaisse->x/34][ positionCaisse->y/34 - 1] != MUR) {
+			// 		carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
+			// 		positionCaisse->y-=34;
+			// 		if(carte[positionCaisse->x/34][positionCaisse->y/34] == OBJECTIF)
+			// 			chargerImg(caisse, IMG_Load("mario/caisse_ok.jpg"));
+			// 		carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+			// 	}
+			// 	if (carte[positionMario->x/34][ positionMario->y/34 - 1] == VIDE) {
+			// 		carte[positionMario->x/34][positionMario->y/34] = VIDE;
+			// 		positionMario->y-=34;
+			// 		carte[positionMario->x/34][positionMario->y/34] = MARIO;
+			// 	}
+			// }
+			moove('v',caisse, positionMario, positionCaisse, positionMario->x/34, positionMario->y/34 - 1, positionCaisse->x/34, positionCaisse->y/34 - 1, positionMario->y-34, positionCaisse->y-34, carte);
 			break;
 		case 'd' :
 			chargerImg(mario, IMG_Load("mario/mario_bas.gif"));
-			if (carte[positionMario->x/34][positionMario->y/34 +1] != MUR) {
-				if (carte[positionMario->x/34][positionMario->y/34 +1] == CAISSE && carte[positionCaisse->x/34][positionCaisse->y/34 +1] != MUR) {
-					carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
-					positionCaisse->y+=34;
-					carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
-				}
-				if (carte[positionMario->x/34][positionMario->y/34 +1] == VIDE) {
-					carte[positionMario->x/34][positionMario->y/34] = VIDE;
-					positionMario->y+=34;
-					carte[positionMario->x/34][positionMario->y/34] = MARIO;
-				}
-			}
+			// if (carte[positionMario->x/34][positionMario->y/34 +1] != MUR) {
+			// 	if (carte[positionMario->x/34][positionMario->y/34 +1] == CAISSE && carte[positionCaisse->x/34][positionCaisse->y/34 +1] != MUR) {
+			// 		carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
+			// 		positionCaisse->y+=34;
+			// 		if(carte[positionCaisse->x/34][positionCaisse->y/34] == OBJECTIF)
+			// 			chargerImg(caisse, IMG_Load("mario/caisse_ok.jpg"));
+			// 		carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+			// 	}
+			// 	if (carte[positionMario->x/34][positionMario->y/34 +1] == VIDE) {
+			// 		carte[positionMario->x/34][positionMario->y/34] = VIDE;
+			// 		positionMario->y+=34;
+			// 		carte[positionMario->x/34][positionMario->y/34] = MARIO;
+			// 	}
+			// }
+			moove('v',caisse, positionMario, positionCaisse, positionMario->x/34, positionMario->y/34 + 1, positionCaisse->x/34, positionCaisse->y/34 + 1, positionMario->y+34, positionCaisse->y+34,carte);
 			break;
 		case 'l' :
 			chargerImg(mario, IMG_Load("mario/mario_gauche.gif"));
-			printf("%d %d %d\n", carte[positionMario->x /34 - 1][ positionMario->y/34], positionMario->x/34, positionMario->y/34);
-			if (carte[positionMario->x /34 - 1][positionMario->y/34] != MUR) {
-				if (carte[positionMario->x /34 - 1][positionMario->y/34] == CAISSE && carte[positionCaisse->x /34 - 1][positionCaisse->y/34] != MUR) {
-					carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
-					positionCaisse->x-=34;
-					carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
-				}
-				if (carte[positionMario->x /34 - 1][positionMario->y/34] == VIDE) {
-					carte[positionMario->x/34][positionMario->y/34] = VIDE;
-					positionMario->x-=34;
-					carte[positionMario->x/34][positionMario->y/34] = MARIO;
-				}
-			}
+			// printf("%d %d %d\n", carte[positionMario->x /34 - 1][ positionMario->y/34], positionMario->x/34, positionMario->y/34);
+			// if (carte[positionMario->x /34 - 1][positionMario->y/34] != MUR) {
+			// 	if (carte[positionMario->x /34 - 1][positionMario->y/34] == CAISSE && carte[positionCaisse->x /34 - 1][positionCaisse->y/34] != MUR) {
+			// 		carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
+			// 		positionCaisse->x-=34;
+			// 		if(carte[positionCaisse->x/34][positionCaisse->y/34] == OBJECTIF)
+			// 			chargerImg(caisse, IMG_Load("mario/caisse_ok.jpg"));
+			// 		carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+			// 	}
+			// 	if (carte[positionMario->x /34 - 1][positionMario->y/34] == VIDE) {
+			// 		carte[positionMario->x/34][positionMario->y/34] = VIDE;
+			// 		positionMario->x-=34;
+			// 		carte[positionMario->x/34][positionMario->y/34] = MARIO;
+			// 	}
+			// }
+			moove('h', caisse, positionMario, positionCaisse, positionMario->x/34 - 1, positionMario->y/34, positionCaisse->x/34 - 1, positionCaisse->y/34, positionMario->x-34, positionCaisse->x-34,carte);
 			break;
 		case 'r' :
 			chargerImg(mario, IMG_Load("mario/mario_droite.gif"));
-			if (carte[positionMario->x /34 + 1][positionMario->y/34] != MUR) {
-				if (carte[positionMario->x /34 + 1][positionMario->y/34] == CAISSE && carte[positionCaisse->x /34 + 1][positionCaisse->y/34] != MUR) {
-					carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
-					positionCaisse->x+=34;
-					carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
-				}
-				if (carte[positionMario->x /34 + 1][positionMario->y/34] == VIDE) {
-					carte[positionMario->x/34][positionMario->y/34] = VIDE;
-					positionMario->x+=34;
-					carte[positionMario->x/34][positionMario->y/34] = MARIO;
-				}
-			}
+			// if (carte[positionMario->x /34 + 1][positionMario->y/34] != MUR) {
+			// 	if (carte[positionMario->x /34 + 1][positionMario->y/34] == CAISSE && carte[positionCaisse->x /34 + 1][positionCaisse->y/34] != MUR) {
+			// 		carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
+			// 		positionCaisse->x+=34;
+			// 		if(carte[positionCaisse->x/34][positionCaisse->y/34] == OBJECTIF)
+			// 			chargerImg(caisse, IMG_Load("mario/caisse_ok.jpg"));
+			// 		carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+			// 	}
+			// 	if (carte[positionMario->x /34 + 1][positionMario->y/34] == VIDE) {
+			// 		carte[positionMario->x/34][positionMario->y/34] = VIDE;
+			// 		positionMario->x+=34;
+			// 		carte[positionMario->x/34][positionMario->y/34] = MARIO;
+			// 	}
+			// }
+			moove('h', caisse, positionMario, positionCaisse, positionMario->x/34 + 1, positionMario->y/34, positionCaisse->x/34 + 1, positionCaisse->y/34, positionMario->x+34, positionCaisse->x+34,carte);
 			break;
 	}
 }
