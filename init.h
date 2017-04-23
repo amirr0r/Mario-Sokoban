@@ -6,6 +6,7 @@
 enum {VIDE, MUR, CAISSE, OBJECTIF, MARIO}; // VIDE = 0, MUR = 1, CAISSE = 2 etc..
 void placerMur(SDL_Surface * fenetre, SDL_Surface * mur, SDL_Rect positionMur, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]);
 void deplacerMario(SDL_Surface * mario, SDL_Surface * caisse, SDL_Rect * positionMario, SDL_Rect * positionCaisse, SDL_Surface * img, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], int x, int y, char * direction);
+
 void chargerImg(SDL_Surface * surf, SDL_Surface * img) {
 	*surf = *img;
 }
@@ -60,53 +61,98 @@ void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SD
 	{
 		for (j = 0; j < 12; j++)
 		{
+			// printf("%d\t", carte[j][i]);
 			position.x = i * TAILLE_BLOC;
 			position.y = j * TAILLE_BLOC;
 			if(carte[i][j] == MUR) 
 				SDL_BlitSurface(mur, NULL, fenetre, &position);
 			else if(carte[i][j] == OBJECTIF)
 				SDL_BlitSurface(objectif, NULL, fenetre, &position);
-			else if(carte[i][j] == MARIO)		
+			else if(carte[i][j] == MARIO)
 				SDL_BlitSurface(mario, NULL, fenetre, positionMario);
-			else if(carte[i][j] == CAISSE)		
+			else if(carte[i][j] == CAISSE)
 				SDL_BlitSurface(caisse, NULL, fenetre, positionCaisse);
 		}
+		// printf("\n");
 	}
+	// puts("----------------------------------------------------------------");
 	SDL_Flip(fenetre);
 }
+// void moove(SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
+// 	if (carte[positionMario->x/34][positionMario->y/34 +1] != MUR) {
+// 		if (carte[positionMario->x/34][positionMario->y/34 +1] == CAISSE && carte[positionCaisse->x/34][positionCaisse->y/34 +1] != MUR) {
+// 			carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
+// 			positionCaisse->y+=34;
+// 			carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+// 		}
+// 		if (carte[positionMario->x/34][positionMario->y/34 +1] == VIDE) {
+// 			carte[positionMario->x/34][positionMario->y/34] = VIDE;
+// 			positionMario->y+=34;
+// 			carte[positionMario->x/34][positionMario->y/34] = MARIO;
+// 		}
+// 	}
+// }
 void deplacement(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], char direction) { // 'u' = up, 'd' = down, 'l' = left et 'r' = right.
 	switch(direction) {
 		case 'u' :
 			chargerImg(mario, IMG_Load("mario/mario_haut.gif"));
 			if (carte[positionMario->x/34][ positionMario->y/34 - 1] != MUR) {
-				carte[positionMario->x/34][positionMario->y/34] = VIDE;
-				positionMario->y-=34;
-				carte[positionMario->x/34][positionMario->y/34] = MARIO;
+				if (carte[positionMario->x/34][ positionMario->y/34 - 1] == CAISSE && carte[positionCaisse->x/34][ positionCaisse->y/34 - 1] != MUR) {
+					carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
+					positionCaisse->y-=34;
+					carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+				}
+				if (carte[positionMario->x/34][ positionMario->y/34 - 1] == VIDE) {
+					carte[positionMario->x/34][positionMario->y/34] = VIDE;
+					positionMario->y-=34;
+					carte[positionMario->x/34][positionMario->y/34] = MARIO;
+				}
 			}
 			break;
 		case 'd' :
 			chargerImg(mario, IMG_Load("mario/mario_bas.gif"));
-			if (carte[positionMario->x/34][positionMario->y/34 +1] == VIDE) {
-				carte[positionMario->x/34][positionMario->y/34] = VIDE;
-				positionMario->y+=34;
-				carte[positionMario->x/34][positionMario->y/34] = MARIO;
+			if (carte[positionMario->x/34][positionMario->y/34 +1] != MUR) {
+				if (carte[positionMario->x/34][positionMario->y/34 +1] == CAISSE && carte[positionCaisse->x/34][positionCaisse->y/34 +1] != MUR) {
+					carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
+					positionCaisse->y+=34;
+					carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+				}
+				if (carte[positionMario->x/34][positionMario->y/34 +1] == VIDE) {
+					carte[positionMario->x/34][positionMario->y/34] = VIDE;
+					positionMario->y+=34;
+					carte[positionMario->x/34][positionMario->y/34] = MARIO;
+				}
 			}
 			break;
 		case 'l' :
 			chargerImg(mario, IMG_Load("mario/mario_gauche.gif"));
 			printf("%d %d %d\n", carte[positionMario->x /34 - 1][ positionMario->y/34], positionMario->x/34, positionMario->y/34);
-			if (carte[positionMario->x /34 - 1][positionMario->y/34] == VIDE) {
-				carte[positionMario->x/34][positionMario->y/34] = VIDE;
-				positionMario->x-=34;
-				carte[positionMario->x/34][positionMario->y/34] = MARIO;
+			if (carte[positionMario->x /34 - 1][positionMario->y/34] != MUR) {
+				if (carte[positionMario->x /34 - 1][positionMario->y/34] == CAISSE && carte[positionCaisse->x /34 - 1][positionCaisse->y/34] != MUR) {
+					carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
+					positionCaisse->x-=34;
+					carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+				}
+				if (carte[positionMario->x /34 - 1][positionMario->y/34] == VIDE) {
+					carte[positionMario->x/34][positionMario->y/34] = VIDE;
+					positionMario->x-=34;
+					carte[positionMario->x/34][positionMario->y/34] = MARIO;
+				}
 			}
 			break;
 		case 'r' :
 			chargerImg(mario, IMG_Load("mario/mario_droite.gif"));
-			if (carte[positionMario->x /34 + 1][positionMario->y/34] == VIDE) {
-				carte[positionMario->x/34][positionMario->y/34] = VIDE;
-				positionMario->x+=34;
-				carte[positionMario->x/34][positionMario->y/34] = MARIO;
+			if (carte[positionMario->x /34 + 1][positionMario->y/34] != MUR) {
+				if (carte[positionMario->x /34 + 1][positionMario->y/34] == CAISSE && carte[positionCaisse->x /34 + 1][positionCaisse->y/34] != MUR) {
+					carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
+					positionCaisse->x+=34;
+					carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+				}
+				if (carte[positionMario->x /34 + 1][positionMario->y/34] == VIDE) {
+					carte[positionMario->x/34][positionMario->y/34] = VIDE;
+					positionMario->x+=34;
+					carte[positionMario->x/34][positionMario->y/34] = MARIO;
+				}
 			}
 			break;
 	}

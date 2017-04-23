@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
 	// Map du jeu
 	int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR] = {0};
 	niveau3(carte);
-	
+
 	int continuer = 1;
 	SDL_Flip(fenetre);
 
