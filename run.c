@@ -30,7 +30,7 @@ int main(int argc, char const *argv[])
 		niveau2(carte);
 		chargerImg(caisse, IMG_Load("mario/caisse.jpg"));
 	}
-	else if (tour == 3) {
+	else if (niveau == 3 && tour == 2) {
 		niveau3(carte);
 		chargerImg(caisse, IMG_Load("mario/caisse.jpg"));
 	}
@@ -85,11 +85,10 @@ int main(int argc, char const *argv[])
 		}
 		majMap(fenetre, mario, caisse, mur, objectif, carte);
 		SDL_Flip(fenetre);
-		if (niveau > 1) {
-			if ((niveau == 2 && tour == 0) || (niveau == 3 && tour == 1)) {
-				tour++;
-				goto start;
-			}
+		printf("tour n°%d et niveau n°:%d\n", tour, niveau);
+		if ((niveau == 2 && tour == 0) || (niveau == 3 && tour == 1)) {
+			tour++;
+			goto start;
 		}
 	}
 	SDL_EnableKeyRepeat(0, 0);
