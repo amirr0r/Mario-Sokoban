@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "init.h"
-#include <SDL_ttf.h>
+// #include <SDL_ttf.h>
 int main(int argc, char const *argv[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -21,9 +21,20 @@ int main(int argc, char const *argv[])
 
 	// Map du jeu
 	int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR] = {0};
-	niveau1(carte);
+	int continuer = 1, niveau = 1, tour = 0;
+	
+	start : ;
+	if(niveau == 1)
+		niveau1(carte);
+	else if(niveau == 2 && tour == 1) {
+		niveau2(carte);
+		chargerImg(caisse, IMG_Load("mario/caisse.jpg"));
+	}
+	else if (tour == 3) {
+		niveau3(carte);
+		chargerImg(caisse, IMG_Load("mario/caisse.jpg"));
+	}
 
-	int continuer = 1;
 	SDL_Flip(fenetre);
 
 	SDL_Rect positionMario, positionCaisse;
@@ -58,22 +69,28 @@ int main(int argc, char const *argv[])
                         continuer = 0; 
                         break;
                     case SDLK_UP:
-                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'u');
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'u', &niveau);
                         break;
                     case SDLK_DOWN:
-                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'd');
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'd', &niveau);
                         break;
                     case SDLK_RIGHT:
-                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'r');
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'r', &niveau);
                         break;
                     case SDLK_LEFT:
-                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'l');
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'l', &niveau);
                         break;
                 }
             break;
 		}
-		majMap(fenetre, mario, caisse, mur, objectif, &positionMario, &positionCaisse, carte);
+		majMap(fenetre, mario, caisse, mur, objectif, carte);
 		SDL_Flip(fenetre);
+		if (niveau > 1) {
+			if ((niveau == 2 && tour == 0) || (niveau == 3 && tour == 1)) {
+				tour++;
+				goto start;
+			}
+		}
 	}
 	SDL_EnableKeyRepeat(0, 0);
     // Libération des surfaces chargées

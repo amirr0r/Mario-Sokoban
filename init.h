@@ -62,7 +62,7 @@ void niveau3(int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
 		carte[6][i] = VIDE;
 	carte[6][9] = OBJECTIF;
 }
-void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SDL_Surface * mur, SDL_Surface * objectif, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
+void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SDL_Surface * mur, SDL_Surface * objectif, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
 	SDL_FillRect(fenetre, NULL, SDL_MapRGB(fenetre->format, 255, 255, 255));
 	SDL_Rect position;
 	int i, j;
@@ -78,16 +78,16 @@ void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SD
 			else if(carte[i][j] == OBJECTIF)
 				SDL_BlitSurface(objectif, NULL, fenetre, &position);
 			else if(carte[i][j] == MARIO)
-				SDL_BlitSurface(mario, NULL, fenetre, positionMario);
+				SDL_BlitSurface(mario, NULL, fenetre, &position);
 			else if(carte[i][j] == CAISSE)
-				SDL_BlitSurface(caisse, NULL, fenetre, positionCaisse);
+				SDL_BlitSurface(caisse, NULL, fenetre, &position);
 		}
 		// printf("\n");
 	}
 	// puts("----------------------------------------------------------------");
 	SDL_Flip(fenetre);
 }
-void moove(char inclinaison, SDL_Surface * caisse, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int xm, int ym, int xc, int yc, int newpositionM, int newpositionC, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
+void moove(char inclinaison, SDL_Surface * caisse, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int xm, int ym, int xc, int yc, int newpositionM, int newpositionC, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], int * niveau) {
 	if (carte[xm][ym] != MUR) {
 		if (carte[xm][ym] == CAISSE && carte[xc][yc] != MUR) {
 			carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
@@ -95,8 +95,10 @@ void moove(char inclinaison, SDL_Surface * caisse, SDL_Rect * positionMario, SDL
 				positionCaisse->x=newpositionC;
 			else
 				positionCaisse->y=newpositionC;
-			if(carte[positionCaisse->x/34][positionCaisse->y/34] == OBJECTIF)
+			if(carte[positionCaisse->x/34][positionCaisse->y/34] == OBJECTIF) {
 				chargerImg(caisse, IMG_Load("mario/caisse_ok.jpg"));
+				*niveau += 1;
+			}
 			carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
 		}
 		if (carte[xm][ym] == VIDE) {
@@ -109,23 +111,23 @@ void moove(char inclinaison, SDL_Surface * caisse, SDL_Rect * positionMario, SDL
 		}
 	}
 }
-void deplacement(SDL_Surface * caisse, SDL_Surface * mario, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], char direction) { // 'u' = up, 'd' = down, 'l' = left et 'r' = right.
+void deplacement(SDL_Surface * caisse, SDL_Surface * mario, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], char direction, int * niveau) { // 'u' = up, 'd' = down, 'l' = left et 'r' = right.
 	switch(direction) {
 		case 'u' :
 			chargerImg(mario, IMG_Load("mario/mario_haut.gif"));
-			moove('v',caisse, positionMario, positionCaisse, positionMario->x/34, positionMario->y/34 - 1, positionCaisse->x/34, positionCaisse->y/34 - 1, positionMario->y-34, positionCaisse->y-34, carte);
+			moove('v',caisse, positionMario, positionCaisse, positionMario->x/34, positionMario->y/34 - 1, positionCaisse->x/34, positionCaisse->y/34 - 1, positionMario->y-34, positionCaisse->y-34, carte, niveau);
 			break;
 		case 'd' :
 			chargerImg(mario, IMG_Load("mario/mario_bas.gif"));
-			moove('v',caisse, positionMario, positionCaisse, positionMario->x/34, positionMario->y/34 + 1, positionCaisse->x/34, positionCaisse->y/34 + 1, positionMario->y+34, positionCaisse->y+34,carte);
+			moove('v',caisse, positionMario, positionCaisse, positionMario->x/34, positionMario->y/34 + 1, positionCaisse->x/34, positionCaisse->y/34 + 1, positionMario->y+34, positionCaisse->y+34,carte, niveau);
 			break;
 		case 'l' :
 			chargerImg(mario, IMG_Load("mario/mario_gauche.gif"));
-			moove('h', caisse, positionMario, positionCaisse, positionMario->x/34 - 1, positionMario->y/34, positionCaisse->x/34 - 1, positionCaisse->y/34, positionMario->x-34, positionCaisse->x-34,carte);
+			moove('h', caisse, positionMario, positionCaisse, positionMario->x/34 - 1, positionMario->y/34, positionCaisse->x/34 - 1, positionCaisse->y/34, positionMario->x-34, positionCaisse->x-34,carte, niveau);
 			break;
 		case 'r' :
 			chargerImg(mario, IMG_Load("mario/mario_droite.gif"));
-			moove('h', caisse, positionMario, positionCaisse, positionMario->x/34 + 1, positionMario->y/34, positionCaisse->x/34 + 1, positionCaisse->y/34, positionMario->x+34, positionCaisse->x+34,carte);
+			moove('h', caisse, positionMario, positionCaisse, positionMario->x/34 + 1, positionMario->y/34, positionCaisse->x/34 + 1, positionCaisse->y/34, positionMario->x+34, positionCaisse->x+34,carte, niveau);
 			break;
 	}
 }
