@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
 	// Declaration des surfaces
-	SDL_Surface * fenetre = NULL, * mario = NULL, * mur = NULL,* caisse = NULL, *caisse2 = NULL, * objectif = NULL;
+	SDL_Surface * fenetre = NULL, * mario = NULL, * mur = NULL,* caisse = NULL, *caisse2 = NULL, * objectif = NULL; // * bravo= NULL
 
 	fenetre = SDL_SetVideoMode(LARGEUR_FENETRE, HAUTEUR_FENETRE, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 	mario = IMG_Load("mario/mario_bas.gif");
@@ -16,6 +16,7 @@ int main(int argc, char const *argv[])
 	caisse = IMG_Load("mario/caisse.jpg");
 	caisse2 = IMG_Load("mario/caisse.jpg");
 	objectif = IMG_Load("mario/objectif.png");
+	// bravo = IMG_Load("mario/Bravo.jpeg");
 
 	// Modif couleur background
 	SDL_FillRect(fenetre, NULL, SDL_MapRGB(fenetre->format, 255, 255, 255));
@@ -23,6 +24,9 @@ int main(int argc, char const *argv[])
 	// Map du jeu
 	int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR] = {0};
 	int continuer = 1, niveau = 1, tour = 0;
+	SDL_Rect positionMario;
+	positionMario.x = 0;
+	positionMario.y = 0;
 	
 	start : ;
 	if(niveau == 1)
@@ -32,13 +36,15 @@ int main(int argc, char const *argv[])
 		chargerImg(caisse, IMG_Load("mario/caisse.jpg"));
 	}
 	else if (niveau == 3 && tour == 2) {
-		niveau3(carte);
-		chargerImg(caisse, IMG_Load("mario/caisse.jpg"));
+		// niveau3(carte);
+		// chargerImg(caisse, IMG_Load("mario/caisse.jpg"));
+		// positionMario.x = fenetre->w -bravo->w;
+		// positionMario.y = fenetre->h -bravo->h;
+		// SDL_FillRect(fenetre, NULL, SDL_MapRGB(fenetre->format, 255, 255, 255));
+		// SDL_BlitSurface(bravo, NULL, fenetre, &positionMario);
+		goto end;
 	}
-
-	SDL_Flip(fenetre);
-
-	SDL_Rect positionMario, positionCaisse, positionCaisse2;
+	SDL_Rect positionCaisse, positionCaisse2;
 	int i, j;
 	for (i = 0; i < 12; i++) { 
 		for (j = 0; j < 12; j++){ 
@@ -56,6 +62,9 @@ int main(int argc, char const *argv[])
 				}
 		}
 	}
+
+	SDL_Flip(fenetre);
+
 	// Activation de la repetition des touches
 	SDL_EnableKeyRepeat(100, 100);
 	// Boucle principal
@@ -74,16 +83,16 @@ int main(int argc, char const *argv[])
                         continuer = 0; 
                         break;
                     case SDLK_UP:
-                    	deplacement(caisse, caisse2, mario, &positionMario, &positionCaisse, carte, 'u', &niveau);
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'u', &niveau);
                         break;
                     case SDLK_DOWN:
-                    	deplacement(caisse, caisse2, mario, &positionMario, &positionCaisse, carte, 'd', &niveau);
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'd', &niveau);
                         break;
                     case SDLK_RIGHT:
-                    	deplacement(caisse, caisse2, mario, &positionMario, &positionCaisse, carte, 'r', &niveau);
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'r', &niveau);
                         break;
                     case SDLK_LEFT:
-                    	deplacement(caisse, caisse2, mario, &positionMario, &positionCaisse, carte, 'l', &niveau);
+                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'l', &niveau);
                         break;
                 }
             break;
@@ -96,14 +105,17 @@ int main(int argc, char const *argv[])
 			goto start;
 		}
 	}
+	end : ;
+	// SDL_Delay(5000);
 	SDL_EnableKeyRepeat(0, 0);
     // Libération des surfaces chargées
     SDL_FreeSurface(mario);
     SDL_FreeSurface(mur);
     SDL_FreeSurface(caisse);
+    SDL_FreeSurface(caisse2);
     SDL_FreeSurface(objectif);
+    // SDL_FreeSurface(bravo);
     SDL_FreeSurface(fenetre);
 	SDL_Quit();
 	return 0;
 }
-

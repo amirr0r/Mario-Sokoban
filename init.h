@@ -68,7 +68,7 @@ void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SD
 	{
 		for (j = 0; j < 12; j++)
 		{
-			printf("%d\t", carte[j][i]);
+			// printf("%d\t", carte[j][i]);
 			position.x = i * TAILLE_BLOC;
 			position.y = j * TAILLE_BLOC;
 			if(carte[i][j] == MUR) 
@@ -82,13 +82,14 @@ void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SD
 			else if(carte[i][j] == CAISSE2)
 				SDL_BlitSurface(caisse2, NULL, fenetre, &position);
 		}
-		printf("\n");
+		// printf("\n");
 	}
-	puts("----------------------------------------------------------------");
+	// puts("----------------------------------------------------------------");
 	SDL_Flip(fenetre);
 }
 void moove(char inclinaison, SDL_Surface * caisse, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int xm, int ym, int xc, int yc, int newpositionM, int newpositionC, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], int * niveau) {
 	if (carte[xm][ym] != MUR) {
+		// printf("%d\n", carte[xm][ym]);
 		if (carte[xm][ym] == CAISSE && carte[xc][yc] != MUR) {
 			carte[positionCaisse->x/34][positionCaisse->y/34] = VIDE;
 			if (inclinaison == 'h')
@@ -99,7 +100,10 @@ void moove(char inclinaison, SDL_Surface * caisse, SDL_Rect * positionMario, SDL
 				chargerImg(caisse, IMG_Load("mario/caisse_ok.jpg"));
 				*niveau += 1;
 			}
-			carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;
+			// if (carte[xm][ym] == CAISSE2)
+			// 	carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE2;
+			// else
+				carte[positionCaisse->x/34][positionCaisse->y/34] = CAISSE;		
 		}
 		if (carte[xm][ym] == VIDE) {
 			carte[positionMario->x/34][positionMario->y/34] = VIDE;
@@ -111,23 +115,38 @@ void moove(char inclinaison, SDL_Surface * caisse, SDL_Rect * positionMario, SDL
 		}
 	}
 }
-void deplacement(SDL_Surface * caisse, SDL_Surface * caisse2, SDL_Surface * mario, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], char direction, int * niveau) { // 'u' = up, 'd' = down, 'l' = left et 'r' = right.
+void deplacement(SDL_Surface * caisse, SDL_Surface * mario, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], char direction, int * niveau) { // 'u' = up, 'd' = down, 'l' = left et 'r' = right.
 	switch(direction) {
 		case 'u' :
 			chargerImg(mario, IMG_Load("mario/mario_haut.gif"));
 			moove('v',caisse, positionMario, positionCaisse, positionMario->x/34, positionMario->y/34 - 1, positionCaisse->x/34, positionCaisse->y/34 - 1, positionMario->y-34, positionCaisse->y-34, carte, niveau);
+			// if (*niveau == 3)
+			// 	moove('v',caisse2, positionMario, positionCaisse2, positionMario->x/34, positionMario->y/34 - 1, positionCaisse2->x/34, positionCaisse2->y/34 - 1, positionMario->y-34, positionCaisse2->y-34, carte, niveau);
 			break;
 		case 'd' :
 			chargerImg(mario, IMG_Load("mario/mario_bas.gif"));
 			moove('v',caisse, positionMario, positionCaisse, positionMario->x/34, positionMario->y/34 + 1, positionCaisse->x/34, positionCaisse->y/34 + 1, positionMario->y+34, positionCaisse->y+34,carte, niveau);
+			// if (*niveau == 3)
+			// 	moove('v',caisse2, positionMario, positionCaisse2, positionMario->x/34, positionMario->y/34 + 1, positionCaisse2->x/34, positionCaisse2->y/34 + 1, positionMario->y+34, positionCaisse2->y+34,carte, niveau);
 			break;
 		case 'l' :
 			chargerImg(mario, IMG_Load("mario/mario_gauche.gif"));
 			moove('h', caisse, positionMario, positionCaisse, positionMario->x/34 - 1, positionMario->y/34, positionCaisse->x/34 - 1, positionCaisse->y/34, positionMario->x-34, positionCaisse->x-34,carte, niveau);
+			// if (*niveau == 3)
+			// 	moove('h', caisse2, positionMario, positionCaisse2, positionMario->x/34 - 1, positionMario->y/34, positionCaisse2->x/34 - 1, positionCaisse2->y/34, positionMario->x-34, positionCaisse2->x-34,carte, niveau);
 			break;
 		case 'r' :
 			chargerImg(mario, IMG_Load("mario/mario_droite.gif"));
 			moove('h', caisse, positionMario, positionCaisse, positionMario->x/34 + 1, positionMario->y/34, positionCaisse->x/34 + 1, positionCaisse->y/34, positionMario->x+34, positionCaisse->x+34,carte, niveau);
+			// if (*niveau == 3)
+			// 	moove('h', caisse2, positionMario, positionCaisse2, positionMario->x/34 + 1, positionMario->y/34, positionCaisse2->x/34 + 1, positionCaisse2->y/34, positionMario->x+34, positionCaisse2->x+34,carte, niveau);
 			break;
 	}
 }
+// void freeSurface(int nb , ...) {
+// 	int i;
+// 	for (i = 0; i <= nb; ++i)
+// 	{
+		
+// 	}
+// }
