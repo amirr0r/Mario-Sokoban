@@ -3,9 +3,7 @@
 #define NB_BLOCS_HAUTEUR    12
 #define LARGEUR_FENETRE     TAILLE_BLOC * NB_BLOCS_LARGEUR
 #define HAUTEUR_FENETRE     TAILLE_BLOC * NB_BLOCS_HAUTEUR
-enum {VIDE, MUR, CAISSE, OBJECTIF, MARIO}; // VIDE = 0, MUR = 1, CAISSE = 2 etc..
-void placerMur(SDL_Surface * fenetre, SDL_Surface * mur, SDL_Rect positionMur, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]);
-void deplacerMario(SDL_Surface * mario, SDL_Surface * caisse, SDL_Rect * positionMario, SDL_Rect * positionCaisse, SDL_Surface * img, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], int x, int y, char * direction);
+enum {VIDE, MUR, CAISSE, CAISSE2, OBJECTIF, MARIO}; // VIDE = 0, MUR = 1, CAISSE = 2 etc..
 
 void chargerImg(SDL_Surface * surf, SDL_Surface * img) {
 	*surf = *img;
@@ -55,14 +53,14 @@ void niveau3(int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
 	for (i = 4; i < 8; i++)
 		carte[i][3] = VIDE;
 	carte[6][4] = CAISSE;
-	carte[7][4] = CAISSE;
+	carte[7][4] = CAISSE2;
 	carte[7][5] = VIDE;
 	carte[7][6] = OBJECTIF;
 	for (i = 5; i < 9; i++)
 		carte[6][i] = VIDE;
 	carte[6][9] = OBJECTIF;
 }
-void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SDL_Surface * mur, SDL_Surface * objectif, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
+void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SDL_Surface * caisse2, SDL_Surface * mur, SDL_Surface * objectif, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR]) {
 	SDL_FillRect(fenetre, NULL, SDL_MapRGB(fenetre->format, 255, 255, 255));
 	SDL_Rect position;
 	int i, j;
@@ -70,7 +68,7 @@ void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SD
 	{
 		for (j = 0; j < 12; j++)
 		{
-			// printf("%d\t", carte[j][i]);
+			printf("%d\t", carte[j][i]);
 			position.x = i * TAILLE_BLOC;
 			position.y = j * TAILLE_BLOC;
 			if(carte[i][j] == MUR) 
@@ -81,10 +79,12 @@ void majMap(SDL_Surface * fenetre, SDL_Surface * mario, SDL_Surface * caisse, SD
 				SDL_BlitSurface(mario, NULL, fenetre, &position);
 			else if(carte[i][j] == CAISSE)
 				SDL_BlitSurface(caisse, NULL, fenetre, &position);
+			else if(carte[i][j] == CAISSE2)
+				SDL_BlitSurface(caisse2, NULL, fenetre, &position);
 		}
-		// printf("\n");
+		printf("\n");
 	}
-	// puts("----------------------------------------------------------------");
+	puts("----------------------------------------------------------------");
 	SDL_Flip(fenetre);
 }
 void moove(char inclinaison, SDL_Surface * caisse, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int xm, int ym, int xc, int yc, int newpositionM, int newpositionC, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], int * niveau) {
@@ -111,7 +111,7 @@ void moove(char inclinaison, SDL_Surface * caisse, SDL_Rect * positionMario, SDL
 		}
 	}
 }
-void deplacement(SDL_Surface * caisse, SDL_Surface * mario, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], char direction, int * niveau) { // 'u' = up, 'd' = down, 'l' = left et 'r' = right.
+void deplacement(SDL_Surface * caisse, SDL_Surface * caisse2, SDL_Surface * mario, SDL_Rect * positionMario, SDL_Rect * positionCaisse, int carte[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR], char direction, int * niveau) { // 'u' = up, 'd' = down, 'l' = left et 'r' = right.
 	switch(direction) {
 		case 'u' :
 			chargerImg(mario, IMG_Load("mario/mario_haut.gif"));

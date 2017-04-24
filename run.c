@@ -8,12 +8,13 @@ int main(int argc, char const *argv[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
 	// Declaration des surfaces
-	SDL_Surface * fenetre = NULL, * mario = NULL, * mur = NULL,* caisse = NULL,* objectif = NULL;
+	SDL_Surface * fenetre = NULL, * mario = NULL, * mur = NULL,* caisse = NULL, *caisse2 = NULL, * objectif = NULL;
 
 	fenetre = SDL_SetVideoMode(LARGEUR_FENETRE, HAUTEUR_FENETRE, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 	mario = IMG_Load("mario/mario_bas.gif");
 	mur = IMG_Load("mario/mur.jpg");
 	caisse = IMG_Load("mario/caisse.jpg");
+	caisse2 = IMG_Load("mario/caisse.jpg");
 	objectif = IMG_Load("mario/objectif.png");
 
 	// Modif couleur background
@@ -37,7 +38,7 @@ int main(int argc, char const *argv[])
 
 	SDL_Flip(fenetre);
 
-	SDL_Rect positionMario, positionCaisse;
+	SDL_Rect positionMario, positionCaisse, positionCaisse2;
 	int i, j;
 	for (i = 0; i < 12; i++) { 
 		for (j = 0; j < 12; j++){ 
@@ -48,6 +49,10 @@ int main(int argc, char const *argv[])
 				else if(carte[i][j] == CAISSE) {
 					positionCaisse.x = i*TAILLE_BLOC;
 					positionCaisse.y = j*TAILLE_BLOC;
+				}
+				else if(carte[i][j] == CAISSE2) {
+					positionCaisse2.x = i*TAILLE_BLOC;
+					positionCaisse2.y = j*TAILLE_BLOC;
 				}
 		}
 	}
@@ -69,23 +74,23 @@ int main(int argc, char const *argv[])
                         continuer = 0; 
                         break;
                     case SDLK_UP:
-                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'u', &niveau);
+                    	deplacement(caisse, caisse2, mario, &positionMario, &positionCaisse, carte, 'u', &niveau);
                         break;
                     case SDLK_DOWN:
-                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'd', &niveau);
+                    	deplacement(caisse, caisse2, mario, &positionMario, &positionCaisse, carte, 'd', &niveau);
                         break;
                     case SDLK_RIGHT:
-                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'r', &niveau);
+                    	deplacement(caisse, caisse2, mario, &positionMario, &positionCaisse, carte, 'r', &niveau);
                         break;
                     case SDLK_LEFT:
-                    	deplacement(caisse, mario, &positionMario, &positionCaisse, carte, 'l', &niveau);
+                    	deplacement(caisse, caisse2, mario, &positionMario, &positionCaisse, carte, 'l', &niveau);
                         break;
                 }
             break;
 		}
-		majMap(fenetre, mario, caisse, mur, objectif, carte);
+		majMap(fenetre, mario, caisse, caisse2, mur, objectif, carte);
 		SDL_Flip(fenetre);
-		printf("tour n°%d et niveau n°:%d\n", tour, niveau);
+		// printf("tour n°%d et niveau n°:%d\n", tour, niveau);
 		if ((niveau == 2 && tour == 0) || (niveau == 3 && tour == 1)) {
 			tour++;
 			goto start;
